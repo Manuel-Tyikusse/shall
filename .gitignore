@@ -2,7 +2,6 @@
 test/
 node_modules/
 scripts/
-README.md
 dist/
 src/approval/
 src/channels/
