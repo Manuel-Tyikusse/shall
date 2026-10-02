@@ -100,3 +100,14 @@ Os adaptadores de Cursor, Gemini CLI, Claude Code e Codex refletem os formatos d
 - `npm run build`: compila o TypeScript, sem depender de `ptrace` ou de um compilador C.
 - `npm test`: executa o build e os testes.
 - `shall --help`: lista os comandos disponíveis.
+
+## Painel beta local
+
+1. Copy `.env.example` to `.env` and configure the CLI and CouchDB settings.
+2. Start the dashboard API with `shall dashboard` (or `npm run dev -- dashboard` during development).
+3. In `Downloads/shall-website`, run `npm install` and `npm run dev`.
+4. Open the Vite URL and sign up or sign in. The site proxies dashboard requests to `127.0.0.1:3301`.
+
+Each account has its own tenant and can only read that tenant's activity and team. The tenant key is shown after signup or rotation. Set `SHALL_TENANT_API_KEY` in `.env` to associate this installation's hooks with the account, then run `shall daemon` for hooks. The release preference is saved per tenant, but automatic package distribution and updates are not connected. Downloads have no telemetry yet.
+
+Paddle is only prepared through environment variables (`PADDLE_ENVIRONMENT`, `PADDLE_API_KEY`, `PADDLE_CLIENT_TOKEN`, `PADDLE_WEBHOOK_SECRET`). Checkout, prices, subscriptions and webhooks are not implemented; no charges are active. The API binds to `127.0.0.1` and must not be exposed to the internet.
