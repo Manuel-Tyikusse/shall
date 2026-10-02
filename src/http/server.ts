@@ -1,5 +1,7 @@
 import express from "express";
 import type { Server } from "node:http";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { ZodError } from "zod";
 import { config } from "../config.js";
 import { createLogger } from "../logger.js";
@@ -8,6 +10,7 @@ import { smsRoutes } from "./smsRoutes.js";
 import { apiRoutes } from "./apiRoutes.js";
 
 const logger = createLogger("server");
+const publicRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../../public");
 
 export function createServer() {
   const app = express();
@@ -22,6 +25,7 @@ export function createServer() {
   app.use("/v1", apiRoutes()); // API para o cliente fino (Fase 2), autenticada por chave de API do tenant
 
   app.get("/health", (_req, res) => res.json({ ok: true }));
+  app.get("/", (_req, res) => res.sendFile(resolve(publicRoot, "index.html")));
 
   app.use((err: unknown, req: express.Request, res: express.Response, next: express.NextFunction) => {
     if (res.headersSent) return next(err);

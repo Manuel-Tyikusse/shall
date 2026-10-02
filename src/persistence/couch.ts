@@ -30,3 +30,5 @@ export const approvalsDb = await ensureDb(config.couchdb.approvalsDb);
 export const teamDb = await ensureDb(config.couchdb.teamDb);
 export const classificationCacheDb = await ensureDb(config.couchdb.classificationCacheDb);
 export const tenantsDb = await ensureDb(config.couchdb.tenantsDb);
+export const accountsDb = await ensureDb(config.couchdb.accountsDb);
+export const releasesDb = await ensureDb(config.couchdb.releasesDb);

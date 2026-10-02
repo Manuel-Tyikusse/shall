@@ -23,6 +23,14 @@ program
     await startServer();
   });
 
+program
+  .command("dashboard")
+  .description("Abre o painel administrativo local em http://127.0.0.1:3301.")
+  .action(async () => {
+    const { startDashboardServer } = await import("./http/dashboardServer.js");
+    await startDashboardServer();
+  });
+
 const hook = program.command("hook").description("Integra os hooks pré-execução dos agentes com a avaliação do Shall.");
 hook
   .command("check")

@@ -16,6 +16,11 @@ const envSchema = z.object({
   // Servidor
   PUBLIC_URL: z.string().url("PUBLIC_URL tem de ser um URL válido (ex: https://xxxx.ngrok-free.app)"),
   PORT: z.coerce.number().int().positive().default(3300),
+  DASHBOARD_PORT: z.coerce.number().int().positive().default(3301),
+  PADDLE_ENVIRONMENT: z.enum(["sandbox", "production"]).default("sandbox"),
+  PADDLE_API_KEY: z.string().optional(),
+  PADDLE_CLIENT_TOKEN: z.string().optional(),
+  PADDLE_WEBHOOK_SECRET: z.string().optional(),
 
   // Aprovação
   APPROVAL_TIMEOUT_MS: z.coerce.number().int().positive().default(120_000),
@@ -28,6 +33,9 @@ const envSchema = z.object({
   COUCHDB_TEAM_DB: z.string().default("agent_guard_team"),
   COUCHDB_CLASSIFICATION_CACHE_DB: z.string().default("agent_guard_classification_cache"),
   COUCHDB_TENANTS_DB: z.string().default("agent_guard_tenants"),
+  COUCHDB_ACCOUNTS_DB: z.string().default("shall_accounts"),
+  SHALL_TENANT_API_KEY: z.string().optional(),
+  COUCHDB_RELEASES_DB: z.string().default("shall_releases"),
   CLASSIFICATION_CACHE_TTL_MS: z.coerce.number().int().positive().default(24 * 60 * 60_000),
 
   // Google Gemini (classificação e assistente)
@@ -60,6 +68,16 @@ export const config = {
     publicUrl: env.PUBLIC_URL,
     port: env.PORT,
   },
+  dashboard: {
+    port: env.DASHBOARD_PORT,
+  },
+  paddle: {
+    environment: env.PADDLE_ENVIRONMENT,
+    apiKey: env.PADDLE_API_KEY,
+    clientToken: env.PADDLE_CLIENT_TOKEN,
+    webhookSecret: env.PADDLE_WEBHOOK_SECRET,
+    configured: Boolean(env.PADDLE_API_KEY && env.PADDLE_CLIENT_TOKEN && env.PADDLE_WEBHOOK_SECRET),
+  },
   approval: {
     timeoutMs: env.APPROVAL_TIMEOUT_MS,
     maxClarificationAttempts: env.MAX_CLARIFICATION_ATTEMPTS,
@@ -71,7 +89,10 @@ export const config = {
     teamDb: env.COUCHDB_TEAM_DB,
     classificationCacheDb: env.COUCHDB_CLASSIFICATION_CACHE_DB,
     tenantsDb: env.COUCHDB_TENANTS_DB,
+    accountsDb: env.COUCHDB_ACCOUNTS_DB,
+    releasesDb: env.COUCHDB_RELEASES_DB,
   },
+  tenantApiKey: env.SHALL_TENANT_API_KEY,
   classification: {
     cacheTtlMs: env.CLASSIFICATION_CACHE_TTL_MS,
   },

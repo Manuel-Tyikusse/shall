@@ -15,6 +15,7 @@ export interface TenantDoc {
   apiKeyPrefix: string;
   active: boolean;
   createdAt: number;
+  targetVersion?: string;
 }
 
 function hashApiKey(key: string): string {
@@ -77,6 +78,18 @@ export async function listTenants(): Promise<TenantDoc[]> {
 export async function revokeTenant(id: string): Promise<void> {
   const doc = await tenantsDb.get(id);
   await tenantsDb.insert({ ...doc, active: false } as unknown as Record<string, unknown>);
+}
+
+export async function rotateTenantApiKey(id: string): Promise<string> {
+  const tenant = await tenantsDb.get(id) as unknown as TenantDoc;
+  const apiKey = `agk_${crypto.randomBytes(24).toString("hex")}`;
+  const updated = {
+    ...tenant,
+    apiKeyHash: hashApiKey(apiKey),
+    apiKeyPrefix: apiKey.slice(0, 10),
+  };
+  await tenantsDb.insert(updated as unknown as Record<string, unknown>);
+  return apiKey;
 }
 
 /**

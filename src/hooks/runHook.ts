@@ -1,6 +1,6 @@
 import { createInterface } from "node:readline";
 import { submitCommand } from "../core/evaluateCommand.js";
-import { LOCAL_TENANT_ID } from "../persistence/tenantRepo.js";
+import { findTenantByApiKey, LOCAL_TENANT_ID } from "../persistence/tenantRepo.js";
 import { waitForDecision } from "../approval/wait.js";
 import { config } from "../config.js";
 import { normalizeHookInput, formatHookDecision, type HookAdapter } from "./adapters.js";
@@ -40,8 +40,10 @@ export async function runHook(adapter: HookAdapter): Promise<void> {
       throw new Error("O serviço Shall não está ativo. Inicia `shall daemon` antes de usar o hook.");
     }
 
+    const tenant = config.tenantApiKey ? await findTenantByApiKey(config.tenantApiKey) : null;
+    if (config.tenantApiKey && !tenant) throw new Error("SHALL_TENANT_API_KEY is invalid or revoked.");
     const result = await submitCommand(
-      LOCAL_TENANT_ID,
+      tenant?._id ?? LOCAL_TENANT_ID,
       request.command,
       request.cwd,
       request.agentLabel,
@@ -64,4 +66,3 @@ export async function runHook(adapter: HookAdapter): Promise<void> {
 
   process.stdout.write(`${JSON.stringify(formatHookDecision(adapter, allowed, reason))}\n`);
 }
-
